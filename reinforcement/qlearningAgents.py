@@ -72,13 +72,17 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         max = None
-        best = None
+        best = []
         for actionprime in self.getLegalActions(state):
           val = self.getQValue(state,actionprime)
-          if max == None or (val > max and val != 0):
+          if max == None or (val > max):
             max=val
-            best=actionprime
-        return best
+            best=[]
+          if val == max:
+            best.append(actionprime)
+        if best == []:
+          return None
+        return random.choice(best)
 
 
     def getAction(self, state):
@@ -97,10 +101,10 @@ class QLearningAgent(ReinforcementAgent):
         action = None
         "*** YOUR CODE HERE ***"
         
-        #if util.flipCoin(self.episilon):
-          #action = random.choice(legalActions)
-        #else:
-        action = self.computeActionFromQValues(state)
+        if util.flipCoin(self.epsilon):
+          action = random.choice(legalActions)
+        else:
+          action = self.computeActionFromQValues(state)
 
         return action
 
@@ -114,6 +118,7 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
+        #print self.alpha
  
         self.values[(state,action)] = self.getQValue(state,action) + self.alpha*(reward + self.discount*self.computeValueFromQValues(nextState) - self.getQValue(state,action))
 
